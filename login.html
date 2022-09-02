@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" >
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500&family=Abel&display=swap" rel="stylesheet">
+</head>
+
+<style>
+
+body
+{
+    background-color: rgb(72, 72, 72);
+    width: auto;
+    height: 100vh;
+}
+.criar{
+  display: flex;
+    width: 100px;
+    height: 40px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+   background-color: rgb(5, 119, 143) ;
+  border-style: solid;
+  border-width: 2px;
+   border-radius: 15px;
+   border-color: rgb(255, 255, 255);
+  color: white;
+  font-family: Abel;
+  font-size: 22px;
+}
+.gratis
+{
+    width: 100px;
+    height: 40px;
+}
+.premium
+{
+    width: 100px;
+    height: 40px;
+}
+
+.titulo
+{
+    display: flex;
+    color: white;
+    font-family: Abel;
+    font-size: 30px;
+    justify-content: flex-start;
+    text-decoration: underline;
+    padding-left: 25px;
+    
+}
+
+.planos{
+
+display: flex;
+flex-direction: row;
+width: 400px;
+
+}
+
+.plano1{
+
+width: 200px;
+
+
+}
+
+.filme{
+    display: flex;  
+    justify-content: right;
+    margin-top:-34% ;
+    margin-right:4%;
+    
+}
+
+</style>
+
+
+
+<body>
+
+    <div class="titulo"> Login</div>
+    <br><br><br>
+    <div>
+     Email: <br>
+    <input type="text" size="25" id="login">
+    </div>
+    <br>
+    <div>
+        Senha: <br>
+       <input type="password" size="25" id="senha">
+       </div>
+       <br>
+      
+    
+       <br> <br> <br> 
+    
+       Tipo Assinatura:
+    <br><br>
+    
+    
+    <div class="planos">
+    
+    <div width="100px " class="plano1">  
+        <li> Anúncios <br> </li>
+        <li> S/ Parte do conteúdo   </li>
+        <li> Requer Email e Senha<br></li>
+    <button class="gratis" >
+        
+        Gratuita 
+        </button>
+    </div>
+    <br> <br> <br>
+    <div class="plano2">   
+      <li> S/ Anúncios <br> </li>
+      <li>  Acesso completo <br></li>
+      <li>  Requer Pagamento <br></li>
+        <button class="premium" >
+            Premium
+           </button> 
+    </div>
+    
+    </div>
+    <br> <br>
+    <div class="criar">
+        CRIAR
+    </div>
+    
+    <div class="filme">
+    <img src="filme2.png"  width="300px" >
+    
+    </div>
+    <a href="inicio.html">
+    <img src="logo.png"  width="300px" height="130px"  >
+    </a>
+
+
+
+
+
+<div class="botao" >
+
+   
+
+    <button onclick="Entrar();" class="button2" >
+        ENTRAR
+        </button>
+
+        
+
+
+</div>
+
+
+    
+
+
+
+
+
+
+</body>
+
+<script src="jquery-3.6.0.min.js"></script>
+
+<script>
+
+   // assim que o app abrir criamos a Base: 
+   //nome da base, versão, observações e megabytes
+var db = openDatabase('APP','v1.0','Minha base',2*1024*1024)
+// base senai será vista na opção inspecionar >> application -> WEBSQL
+
+//criação de tabelas:
+db.transaction(function(tx)
+{
+
+ tx.executeSql('CREATE TABLE IF NOT EXISTS usuarios(login VARCHAR(10) PRIMARY KEY,senha VARCHAR(5))');
+
+});
+
+var caminho="";
+
+function Inserir()
+{
+    db.transaction(function(tx)
+    {
+        tx.executeSql('INSERT INTO usuarios(login,senha) VALUES(?,?)', [login.value,senha.value]);
+    });
+  
+}
+
+
+function Excluir()
+    {
+        db.transaction(function(tx)
+        {
+            tx.executeSql('DELETE FROM usuarios WHERE login=?',[login.value]);
+        })
+    }
+
+
+function Entrar()
+{
+    db.transaction(function(tx)
+    {
+        var sql = 'SELECT * FROM usuarios WHERE login=? and senha=?';
+        tx.executeSql(sql,[login.value, senha.value],function(tx,resultado)
+        {
+            var nr_linhas = resultado.rows.length;
+           if(nr_linhas > 0)
+           {
+            window.open("segundapag.html?usuario="+login.value,"_self")
+           }
+        });
+    });
+
+}
+function Alterar()
+    {
+        db.transaction(function(tx)
+        {
+            tx.executeSql('UPDATE usuarios SET senha=?, imagem=? WHERE login=?',[senha.value,login.value]);
+        })
+    }
+
+
+function Pesquisar()
+    {
+        db.transaction(function(tx)
+        {
+            var consulta = 'SELECT * FROM usuarios WHERE login=?';
+            tx.executeSql(consulta,[login.value], function(tx,resultados)
+            {   
+                // Pegando o número de linhas retornado:
+                var linhas = resultados.rows.length;
+                if (linhas==0)
+                {
+                    alert("NÃO ENCONTRADO");
+                }
+                // Percorrendo cada linha:
+                for(i=0; i<linhas; i++)
+                {
+                    // Vamos pegar o nome:
+                    login.value = resultados.rows.item(i).login;
+                
+                    // Vamos pegar o peso:
+                    imagem.src = resultados.rows.item(i).imagem;
+                }
+            });
+        })
+    }
+
+
+    
+
+
+</script>
+
+
+</html>
